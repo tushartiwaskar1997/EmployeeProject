@@ -11,10 +11,10 @@ import java.util.Date;
 @Setter
 @Getter
 public class EmployeeRequestDto {
-    private String employee_name;
-    //private String deptid ;
-    private String deignationid;
+    private String employeeName;
+    private String deptId ;
+    private String deignationId;
     private String email;
     private LocalDate dbo ;
-    private Boolean is_active_status;
+    private Boolean isActive;
 }

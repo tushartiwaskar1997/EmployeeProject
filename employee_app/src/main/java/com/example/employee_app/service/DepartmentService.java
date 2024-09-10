@@ -22,15 +22,15 @@ public class DepartmentService {
     @Autowired
     private DesignationRepository designationRepository;
 
-
     public List<DepartmentDetails> getthedepartmentlist(){
         return   departmentRepository.findAll();
     }
-    public Optional<DepartmentDetails>  getthedepartmentbyid(int id){
+
+    public Optional<DepartmentDetails>  getthedepartmentbyid(Long id){
         return  departmentRepository.findById(id);
     }
 
-    public String deletethedepartmentbyid(int  id )
+    public String deletethedepartmentbyid(Long  id )
     {
         if(getthedepartmentbyid(id).isPresent()){
             if(CheckIfanyDesignationExistForGivenDepartment(id)){
@@ -48,11 +48,10 @@ public class DepartmentService {
     }
 
     public Optional<DepartmentDetails>  chekifDepartmentispresent(String depname){
-        return  departmentRepository.findBydepartmentname(depname);
+        return  departmentRepository.findBydepartmentName(depname);
     }
 
-    public boolean  CheckIfanyDesignationExistForGivenDepartment(int id){
-        boolean hasDesignation =  designationRepository.existsByDepartmentDetails_Id(id);
-        return  hasDesignation;
+    public boolean  CheckIfanyDesignationExistForGivenDepartment(Long id){
+        return   designationRepository.existsByDepartmentDetails_Id(id);
     }
 }

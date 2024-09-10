@@ -8,11 +8,11 @@ import org.springframework.stereotype.Repository;
 import java.util.*;
 
 @Repository
-public interface EmployeeRepository extends JpaRepository<EmployeeDetails,Integer> {
+public interface EmployeeRepository extends JpaRepository<EmployeeDetails,Long> {
 
     Optional<EmployeeDetails> findByEmail(String Email);
-    boolean existsByDesignationDetails_Designationid(int designationId);
-
+    //boolean existsByDesignationDetails_Designation_Id(int designationId);
+    boolean existsByDesignationDetails_DesignationId(Long designationId);
     @Query(value = "SELECT * FROM employees e WHERE MONTH(e.dbo) = ?1 AND DAY(e.dbo) = ?2",nativeQuery = true)
     List<EmployeeDetails> findEmployeesWithBirthdayToday( int month, int day);
    }

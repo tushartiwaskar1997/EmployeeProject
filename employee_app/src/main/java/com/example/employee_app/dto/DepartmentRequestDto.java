@@ -9,6 +9,6 @@ import lombok.Setter;
 @Getter
 public class DepartmentRequestDto {
     private  String DepartmentName ;
-    private  Boolean  DepartmentStatus ;
+    private  Boolean  isActive ;
 
 }

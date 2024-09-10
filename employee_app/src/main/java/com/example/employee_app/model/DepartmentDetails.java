@@ -3,7 +3,6 @@ package com.example.employee_app.model;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -13,11 +12,11 @@ public class DepartmentDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int  id ;
-    private String departmentname ;
-    private LocalDateTime createdon ;
-    private LocalDateTime updatedon ;
-    private int createdby ;
-    private int updatedby ;
-    private boolean is_active ;
+    private Long  id ;
+    private String departmentName ;
+    private Boolean isActive ;
+    private LocalDateTime createdDate ;
+    private LocalDateTime updatedDate ;
+    private Integer createdBy ;
+    private Integer updatedBy ;
 }

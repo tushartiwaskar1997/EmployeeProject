@@ -22,7 +22,7 @@ public class MessageConfig {
 
     public static final String EMP_DEPARTMENTID_MISSSING ="Department id should be present  please check .";
     public static final String EMP_DESIGNATIONID_MISSING ="Employee Designation id is missing  please check";
-    public static final String DUPLICATE_EMAIL_ISpRESENT ="This email id is already present please check ";
+    public static final String DUPLICATE_EMAIL_IS_PRESENT ="This email id is already present please check ";
     public static final String EMP_NAME_MISSING          ="The employee name is missing please check ";
 
     public static final String DEPARTMENT_NAMEmISSING    ="Department name should be present .";
@@ -32,6 +32,7 @@ public class MessageConfig {
 
     public static final  String DEPARTMENT_CANNOTbE_DELERTED = "Depertment is referred to some Designation hence Department cannot be deleted .please remove Designation frist ";
     public static final  String DESINGATION_CANNOTBE_DELETED =" Designation is reffered to some Employee hence delete Employee frist and then try to delete the Designation .";
+    public static final  String DESIGNATION_NAME_MISSING     ="Designation name is missing .please check !!.";
     public static final  String AUTO_EMAIL_SEND_SUCCESSFULLY =" Auto Email has been delivered to the desitnation successfullly";
     public static final  String Manual_EMAIL_SEND_SUCCESSFULLY =" MAnual Email has been delivered to the desitnation successfullly";
 

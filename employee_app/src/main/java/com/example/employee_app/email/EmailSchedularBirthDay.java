@@ -23,7 +23,7 @@ public class EmailSchedularBirthDay {
         MimeMessageHelper helper =  new MimeMessageHelper(mimeMessage,true,"UTF-8");
         helper.setTo(Emailid);
         helper.setSubject("Today' Greeting  !!");
-        FileSystemResource resource  =  new FileSystemResource(new File("C:\\Users\\ADMIN\\Desktop\\aws   devops\\djnyk.jpg"));
+        FileSystemResource resource  =  new FileSystemResource(new File("C:\\Users\\ADMIN\\Desktop\\aws   devops\\Nikon.jpg"));
         String response = "<p>This is the Greeting from Tushar . Have a Nice Day !!! <img src='cid:testimage' </p>";
         helper.setText(response ,true);
         helper.addInline("testimage",resource);

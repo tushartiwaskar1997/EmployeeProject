@@ -13,19 +13,22 @@ public class EmployeeDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int empid;
-    private String  empname ;
+    private Long Id;
+    private String  empName ;
     private LocalDate dbo ;
     private String email;
+    private Boolean isActive ;
+    private Integer createdBy ;
+    private Integer updatedBy ;
+    private LocalDateTime createdDate ;
+    private LocalDateTime updatedDate ;
+
+
+
     @ManyToOne
     @JoinColumn(name= "desigantion_id")
     private DesignationDetails designationDetails ;
-//    @ManyToOne
-//    @JoinColumn(name= "department_id")
-//    private DepartmentDetails departmentDetails ;
-    private int createdby ;
-    private int updatedby ;
-    private LocalDateTime createdon ;
-    private LocalDateTime updatedon ;
-    private boolean is_active_student ;
+    @ManyToOne
+    @JoinColumn(name= "department_id")
+    private DepartmentDetails departmentDetails ;
 }

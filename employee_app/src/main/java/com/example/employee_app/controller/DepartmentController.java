@@ -27,21 +27,29 @@ public class DepartmentController {
     //LIST-get ,BYID-get  save-post ,delete-get ,updated-put
 
     @GetMapping("/deptlist")
-    public ResponseEntity<Object>  getthelistofDepartments(){
-        return HandleRequest.createResponse(MessageConfig.OPERATION_DONE_SUCCESSFULLY, HttpStatus.OK , dptservice.getthedepartmentlist());
+    public ResponseEntity<Object>  GetTheListofDepartments(){
+        return HandleRequest.createResponse(
+                MessageConfig.OPERATION_DONE_SUCCESSFULLY,
+                HttpStatus.OK ,
+                dptservice.getthedepartmentlist());
     }
     @GetMapping("/deptbyid")
     public  ResponseEntity<Object> GetTheDeptDetailsById(@RequestParam("id") String id ){
-        Optional<DepartmentDetails>  deptoptional =  dptservice.getthedepartmentbyid(Integer.parseInt(id));
+        Optional<DepartmentDetails>  deptoptional =  dptservice.getthedepartmentbyid(Long.parseLong(id));
         if(deptoptional.isPresent()){
             DepartmentDetails deptObj =  deptoptional.get();
-            return  HandleRequest.createResponse(MessageConfig.OPERATION_DONE_SUCCESSFULLY,HttpStatus.OK,deptObj);
+            return  HandleRequest.createResponse(
+                    MessageConfig.OPERATION_DONE_SUCCESSFULLY,
+                    HttpStatus.OK,
+                    deptObj);
         }
-        return  HandleRequest.createResponse(MessageConfig.DEPARTMENT_NOT_FOUND,HttpStatus.NOT_FOUND,null);
+        return  HandleRequest.createResponse(
+                MessageConfig.DEPARTMENT_NOT_FOUND,
+                HttpStatus.NOT_FOUND,null);
     }
     @GetMapping("/deptdelete")
     public ResponseEntity<Object> DeleteDeptByID(@RequestParam("id") String  id){
-        String response =  dptservice.deletethedepartmentbyid(Integer.parseInt(id));
+        String response =  dptservice.deletethedepartmentbyid(Long.parseLong(id));
         return  HandleRequest.createResponse(response , HttpStatus.OK, null);
     }
     @PostMapping("/saveDept")
@@ -50,10 +58,10 @@ public class DepartmentController {
         String checkvalidation =  CheckValidation(deptdto);
         if(checkvalidation==null){
             DepartmentDetails dept =  new DepartmentDetails();
-            dept.setDepartmentname(deptdto.getDepartmentName().toLowerCase());
-            dept.set_active(deptdto.getDepartmentStatus());
-            dept.setCreatedon(LocalDateTime.now());
-            dept.setCreatedby(1);
+            dept.setDepartmentName(deptdto.getDepartmentName().toLowerCase());
+            dept.setIsActive(deptdto.getIsActive());
+            dept.setCreatedDate(LocalDateTime.now());
+            dept.setCreatedBy(1);
             return  HandleRequest.createResponse(MessageConfig.DEPARTMENT_ADDED_SUCCESSFULLY, HttpStatus.CREATED ,dptservice.savethedepartmentdetails(dept));
         }
         return  HandleRequest.createResponse(MessageConfig.OPERATION_FAIL, HttpStatus.NOT_ACCEPTABLE ,checkvalidation);
@@ -61,22 +69,22 @@ public class DepartmentController {
     @PutMapping("/updateDept")
     public ResponseEntity<Object>  UpdateTheDepartmentDetails(@RequestParam("id")String id ,@RequestParam("pojo") String Deptdetails) throws JsonProcessingException {
         DepartmentRequestDto deptdto  =  objectMapper.readValue(Deptdetails,DepartmentRequestDto.class);
-        Optional<DepartmentDetails> deptoptional =  dptservice.getthedepartmentbyid(Integer.parseInt(id));
+        Optional<DepartmentDetails> deptoptional =  dptservice.getthedepartmentbyid(Long.parseLong(id));
         if(deptoptional.isPresent()){
             DepartmentDetails dept  = deptoptional.get();
-            if(!dept.getDepartmentname().equals(deptdto.getDepartmentName().toLowerCase()))
+            if(!dept.getDepartmentName().equals(deptdto.getDepartmentName().toLowerCase()))
             {
                 Optional<DepartmentDetails> checkifDepartmentpresent =  dptservice.chekifDepartmentispresent(deptdto.getDepartmentName().toLowerCase());
                 if(checkifDepartmentpresent.isPresent()){
                     return  HandleRequest.createResponse(MessageConfig.DEPARTMENT_ALREADY_EXIST,HttpStatus.NOT_ACCEPTABLE,null);
                 }else
                 {
-                    dept.setDepartmentname(deptdto.getDepartmentName().toLowerCase());
+                    dept.setDepartmentName(deptdto.getDepartmentName().toLowerCase());
                 }
             }
-            dept.set_active(deptdto.getDepartmentStatus());
-            dept.setUpdatedon(LocalDateTime.now());
-            dept.setUpdatedby(1);
+            dept.setIsActive(deptdto.getIsActive());
+            dept.setUpdatedDate(LocalDateTime.now());
+            dept.setUpdatedBy(1);
             return HandleRequest.createResponse(MessageConfig.DEPARTMENT_UPDATED_SUCCESSFULLY,HttpStatus.OK,dptservice.savethedepartmentdetails(dept));
         }
         return HandleRequest.createResponse(MessageConfig.DEPARTMENT_NOT_FOUND,HttpStatus.BAD_REQUEST,null);
@@ -86,12 +94,12 @@ public class DepartmentController {
         if(deptdto.getDepartmentName()==null || deptdto.getDepartmentName().isEmpty()){
             return MessageConfig.DEPARTMENT_NAMEmISSING;
         }
-        if(deptdto.getDepartmentStatus()==null )
+        if(deptdto.getIsActive()==null )
         {
             return MessageConfig.DEPARTMENT_STATUISMISSING;
         }
-        Optional<DepartmentDetails> checifDepartmentNmaeprestnornot = dptservice.chekifDepartmentispresent(deptdto.getDepartmentName());
-        if(checifDepartmentNmaeprestnornot.isPresent()){
+        Optional<DepartmentDetails> ChecKIfDepartmentNameISPresentOrNot = dptservice.chekifDepartmentispresent(deptdto.getDepartmentName());
+        if(ChecKIfDepartmentNameISPresentOrNot.isPresent()){
             return  MessageConfig.DEPARTMENT_ALREADY_EXIST;
         }
         return null ;

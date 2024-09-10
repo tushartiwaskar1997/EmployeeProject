@@ -24,10 +24,10 @@ public class DesignationService {
         return designationRepository.findAll();
     }
 
-    public Optional<DesignationDetails>  getthedesignationdetailsbyid(int id){
+    public Optional<DesignationDetails>  getthedesignationdetailsbyid(Long id){
         return   designationRepository.findById(id);
     }
-    public  String Deletethedesignationbyid(int id){
+    public  String Deletethedesignationbyid(Long id){
         if(getthedesignationdetailsbyid(id).isPresent()){
             if(CheckifDesignationisRefferedtoAnyEmployee(id)){
                 return  MessageConfig.DESINGATION_CANNOTBE_DELETED;
@@ -42,8 +42,8 @@ public class DesignationService {
     public DesignationDetails savethedesignation(DesignationDetails designation){
         return  designationRepository.save(designation);
     }
-    public  boolean  CheckifDesignationisRefferedtoAnyEmployee(int id){
-        boolean result =  employeeRepository.existsByDesignationDetails_Designationid(id);
-        return  result;
+    public  boolean  CheckifDesignationisRefferedtoAnyEmployee(Long id){
+        return    employeeRepository.existsByDesignationDetails_DesignationId(id);
+
     }
 }

@@ -11,6 +11,6 @@ public class DesignationRequestDto {
 
     private  String deptID ;
     private  String designationName ;
-    private  Boolean is_Active_status ;
+    private  Boolean isActive ;
 
 }

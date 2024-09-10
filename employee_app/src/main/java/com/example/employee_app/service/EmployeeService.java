@@ -20,11 +20,11 @@ public class EmployeeService {
     public List<EmployeeDetails> getthelistoftheemployees(){
         return employeeRepository.findAll();
     }
-    public Optional<EmployeeDetails>  getheemployeedetailsbyid(int id){
+    public Optional<EmployeeDetails>  getheemployeedetailsbyid(Long id){
         return  employeeRepository.findById(id);
     }
 
-    public  String  deletetheemployeebyid(int id )
+    public  String  deletetheemployeebyid(Long id )
     {
         if(getheemployeedetailsbyid(id).isPresent()){
             employeeRepository.deleteById(id);
@@ -38,7 +38,6 @@ public class EmployeeService {
     public Optional<EmployeeDetails>  findtheemployeebyeemail(String email){
         return  employeeRepository.findByEmail(email);
     }
-
     public List<EmployeeDetails> findthelistofEmployeesasperthemonthanddate(int month ,int  day){
         return  employeeRepository.findEmployeesWithBirthdayToday(month,day);
     }

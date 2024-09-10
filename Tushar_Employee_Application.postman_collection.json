@@ -1,0 +1,501 @@
+{
+	"info": {
+		"_postman_id": "6698ee8e-464c-4a16-9ce2-dfae6f6e2c7b",
+		"name": "Tushar_Employee_Application",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26022918"
+	},
+	"item": [
+		{
+			"name": "getDepartmentList",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/dept/deptlist",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"dept",
+						"deptlist"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get_DepartmentById",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "id",
+							"value": "1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/dept/deptbyid",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"dept",
+						"deptbyid"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete_DepartmentByID",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "id",
+							"value": "1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/dept/deptdelete",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"dept",
+						"deptdelete"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Save_Department",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "pojo",
+							"value": "{ \"departmentName\": \"Arts\",  \"departmentStatus\": true}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/dept/saveDept",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"dept",
+						"saveDept"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Department_UPdate",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "id",
+							"value": "3",
+							"type": "text"
+						},
+						{
+							"key": "pojo",
+							"value": "{ \"departmentName\": \"Arts\",  \"departmentStatus\": false}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/dept/updateDept",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"dept",
+						"updateDept"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetThe_listOFDesignation",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/desig/desigList",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"desig",
+						"desigList"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get_Designation_byID",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "id",
+							"value": "1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/desig/Designationbyid",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"desig",
+						"Designationbyid"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete_TheDesignationBYId",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "id",
+							"value": "1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/desig/deleteDesignation",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"desig",
+						"deleteDesignation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Designation_Save",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "pojo",
+							"value": "{  \"deptID\": \"3\",\n\"designationName\": \"support Engineer\",    \"is_Active_status\": true}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/desig/saveDesig",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"desig",
+						"saveDesig"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Designation_update",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "pojo",
+							"value": "{  \"deptID\": \"2\",\n\"designationName\": \"Software Engineer\",    \"is_Active_status\": true}",
+							"type": "text"
+						},
+						{
+							"key": "id",
+							"value": "1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/desig/updateDesignation",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"desig",
+						"updateDesignation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetThe_ListOfEmployees",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/emp/ListofEmp",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"emp",
+						"ListofEmp"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetTheEmployee_byID",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "id",
+							"value": "2",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/emp/getempbyid",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"emp",
+						"getempbyid"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete_theEmployee",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "id",
+							"value": "1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/emp/deletetheemp",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"emp",
+						"deletetheemp"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Employee_Save",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "pojo",
+							"value": "{\n    \"employee_name\": \"Prajwal\",\n    \"deignationid\": \"6\",\n    \"email\": \"Prajwal@example.com\",\n    \"dbo\": \"1997-08-12\",\n    \"is_active_status\": true\n}\n",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/emp/savetheemp",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"emp",
+						"savetheemp"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Employee_Update",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "id",
+							"value": "2",
+							"type": "text"
+						},
+						{
+							"key": "pojo",
+							"value": "{\n    \"employee_name\": \"ram\",\n    \"deignationid\": \"6\",\n    \"email\": \"kartik@example.com\",\n    \"dbo\": \"1997-09-12\",\n    \"is_active_status\": true\n}\n",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/emp/updatemep",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"emp",
+						"updatemep"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SendCustomDateEmail",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "month",
+							"value": "09",
+							"type": "text"
+						},
+						{
+							"key": "day",
+							"value": "09",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/emp/email",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"emp",
+						"email"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

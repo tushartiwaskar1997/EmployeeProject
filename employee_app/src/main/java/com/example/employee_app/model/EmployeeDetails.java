@@ -1,11 +1,13 @@
 package com.example.employee_app.model;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
+//at response object were not comming at
+@JsonPropertyOrder ({"id", "empName", "dbo", "email", "isActive", "createdBy", "updatedBy", "createdDate", "updatedDate", "designationDetails", "departmentDetails"})
 @Entity
 @Table(name= "employees")
 @Data
@@ -18,12 +20,13 @@ public class EmployeeDetails {
     private LocalDate dbo ;
     private String email;
     private Boolean isActive ;
-    private Integer createdBy ;
-    private Integer updatedBy ;
+    private String createdBy ;
+    private String updatedBy ;
     private LocalDateTime createdDate ;
     private LocalDateTime updatedDate ;
 
-
+    @Lob
+    private byte[] imageData ;
 
     @ManyToOne
     @JoinColumn(name= "desigantion_id")

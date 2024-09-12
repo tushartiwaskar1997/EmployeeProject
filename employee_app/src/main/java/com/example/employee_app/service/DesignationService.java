@@ -16,7 +16,6 @@ public class DesignationService {
 
     @Autowired
     private DesignationRepository designationRepository ;
-
     @Autowired
     private EmployeeRepository  employeeRepository ;
 
@@ -28,13 +27,17 @@ public class DesignationService {
         return   designationRepository.findById(id);
     }
     public  String Deletethedesignationbyid(Long id){
-        if(getthedesignationdetailsbyid(id).isPresent()){
-            if(CheckifDesignationisRefferedtoAnyEmployee(id)){
-                return  MessageConfig.DESINGATION_CANNOTBE_DELETED;
+        Optional<DesignationDetails> designationOptional = getthedesignationdetailsbyid(id);
+        if(designationOptional.isPresent()){
+            DesignationDetails designationDetails = designationOptional.get();
+            if(designationDetails.getTotalEmployee()==0)
+            {
+                designationDetails.setIsActive(false);
+                designationRepository.save(designationDetails);
+                return MessageConfig.DESIGNATION_DELETED_SUCCESSFULLY;
             }else
             {
-                designationRepository.deleteById(id);
-                return MessageConfig.DESIGNATION_DELETED_SUCCESSFULLY;
+                return  MessageConfig.DESIGNATION_CANNOT_BE_DELETED;
             }
         }
         return MessageConfig.DESIGNATION_NOT_FOUND;
@@ -44,6 +47,11 @@ public class DesignationService {
     }
     public  boolean  CheckifDesignationisRefferedtoAnyEmployee(Long id){
         return    employeeRepository.existsByDesignationDetails_DesignationId(id);
-
+    }
+    public List<DesignationDetails> GetTheListOfDesigantionAsperTheDeptid(Long id){
+        return designationRepository.findByDepartmentId(id);
+    }
+    public Optional<DesignationDetails> CheckIfDesignatioNmaeExistorNot(String name){
+        return designationRepository.findByDesignationName(name);
     }
 }

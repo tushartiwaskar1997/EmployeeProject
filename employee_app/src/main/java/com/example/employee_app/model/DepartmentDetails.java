@@ -17,6 +17,7 @@ public class DepartmentDetails {
     private Boolean isActive ;
     private LocalDateTime createdDate ;
     private LocalDateTime updatedDate ;
-    private Integer createdBy ;
-    private Integer updatedBy ;
+    private String createdBy ;
+    private String updatedBy ;
+    private Long  totalEmployee ;
 }

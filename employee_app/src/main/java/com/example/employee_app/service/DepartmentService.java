@@ -18,7 +18,6 @@ public class DepartmentService {
 
     @Autowired
     private DepartmentRepository departmentRepository;
-
     @Autowired
     private DesignationRepository designationRepository;
 
@@ -32,12 +31,19 @@ public class DepartmentService {
 
     public String deletethedepartmentbyid(Long  id )
     {
-        if(getthedepartmentbyid(id).isPresent()){
-            if(CheckIfanyDesignationExistForGivenDepartment(id)){
-                return  MessageConfig.DEPARTMENT_CANNOTbE_DELERTED;
-            }else {
-                departmentRepository.deleteById(id);
+        Optional<DepartmentDetails> departmentOptional  =getthedepartmentbyid(id);
+        if(departmentOptional.isPresent()){
+            DepartmentDetails departmentDetails = departmentOptional.get();
+            if(departmentDetails.getTotalEmployee()==0){
+                if(CheckIfANyDesiagnatioisStatustrue(id)){
+                    return  MessageConfig.DEPARTMENT_CANNOT_BE_DELETED;
+                }
+                departmentDetails.setIsActive(false);
+                departmentRepository.save(departmentDetails);
                 return MessageConfig.DEPARTMENT_DELETED_SUCCESSFULLY ;
+            }else
+            {
+                return  MessageConfig.DESIGNATION_CANNOT_BE_DELETED;
             }
         }
         return  MessageConfig.DEPARTMENT_NOT_FOUND ;
@@ -52,6 +58,15 @@ public class DepartmentService {
     }
 
     public boolean  CheckIfanyDesignationExistForGivenDepartment(Long id){
-        return   designationRepository.existsByDepartmentDetails_Id(id);
+        return   designationRepository.existsByDepartmentId(id);
+    }
+    public Boolean CheckIfANyDesiagnatioisStatustrue(Long id){
+        List<DesignationDetails> list =  designationRepository.findByDepartmentId(id);
+        for (DesignationDetails desig : list){
+            if(desig.getIsActive()){
+                return  true;
+            }
+        }
+        return  false;
     }
 }

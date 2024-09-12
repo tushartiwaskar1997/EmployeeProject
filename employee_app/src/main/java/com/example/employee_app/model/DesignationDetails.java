@@ -13,16 +13,19 @@ public class DesignationDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long  designationId ;
+    private Long  departmentId ;
     private String  designationName ;
+
     private Boolean isActive ;
-    private Integer  createdBy ;
-    private Integer  updatedBy ;
+    private String  createdBy ;
+    private String  updatedBy ;
     private LocalDateTime createdDate ;
     private LocalDateTime updatedDate ;
+    private Long totalEmployee ;
 
 
-    @ManyToOne
-    @JoinColumn(name = "departmentid", referencedColumnName ="id")
-    private DepartmentDetails  departmentDetails ;
+//    @ManyToOne
+//    @JoinColumn(name = "departmentid", referencedColumnName ="id")
+//    private DepartmentDetails  departmentDetails ;
 
 }

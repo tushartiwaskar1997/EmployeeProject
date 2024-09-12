@@ -12,7 +12,7 @@ import java.util.Date;
 @Getter
 public class EmployeeRequestDto {
     private String employeeName;
-    private String deptId ;
+    private String departmentID ;
     private String deignationId;
     private String email;
     private LocalDate dbo ;

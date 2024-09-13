@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DesignationRequestDto {
-
+    private  String designationId ;
     private  String departmentId ;
     private  String designationName ;
     private  Boolean isActive ;

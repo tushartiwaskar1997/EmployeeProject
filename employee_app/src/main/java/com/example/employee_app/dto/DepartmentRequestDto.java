@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class DepartmentRequestDto {
-    private  String DepartmentName ;
+    private  String departmentId  ;
+    private  String departmentName ;
     private  Boolean  isActive ;
-
 }

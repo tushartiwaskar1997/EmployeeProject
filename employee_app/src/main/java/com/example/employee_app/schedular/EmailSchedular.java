@@ -21,15 +21,15 @@ public class EmailSchedular {
     @Autowired
     private EmailSchedularBirthDay emailSchedularBirthDay;
     @Scheduled(cron = "0 0 0 * * * ")  //every 0th hour every day
-    public String sendtheGreetingOfBirthday_CronJob() throws MessagingException {
-        List<EmployeeDetails> listofEmp =  employeeService.findthelistofEmployeesasperthemonthanddate(LocalDate.now().getMonthValue(), LocalDate.now().getDayOfMonth());
+    public String SendTheGreetingOfBirthday_CronJob() throws MessagingException {
+        List<EmployeeDetails> listofEmp =  employeeService.FindTheListOfEmployeesAsPerTheMonthAndDate(LocalDate.now().getMonthValue(), LocalDate.now().getDayOfMonth());
         for(EmployeeDetails emp : listofEmp){
             emailSchedularBirthDay.sendthecomplexmail(emp.getEmail());
         }
         return MessageConfig.AUTO_EMAIL_SEND_SUCCESSFULLY;
     }
-    public String sendtheGreetingOfBirthday_direct(int Month ,int day) throws MessagingException {
-        List<EmployeeDetails> listofEmp =  employeeService.findthelistofEmployeesasperthemonthanddate(Month, day);
+    public String SendTheGreetingOfBirthday_direct(int Month ,int day) throws MessagingException {
+        List<EmployeeDetails> listofEmp =  employeeService.FindTheListOfEmployeesAsPerTheMonthAndDate(Month, day);
         for(EmployeeDetails emp : listofEmp){
             emailSchedularBirthDay.sendthecomplexmail(emp.getEmail());
         }

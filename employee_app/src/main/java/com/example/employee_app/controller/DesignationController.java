@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/desig")
+@RequestMapping("/designations")
 public class DesignationController {
 
     @Autowired
@@ -30,19 +30,18 @@ public class DesignationController {
     @Autowired
     private DepartmentService departmentService;
 
-    @GetMapping("/desigList")
-    public ResponseEntity<Object> GetTheListofDesignation() {
+    @GetMapping("/GetDesignationList")
+    public ResponseEntity<Object> GetTheListOfDesignation() {
         return HandleRequest.createResponse(
                 MessageConfig.OPERATION_DONE_SUCCESSFULLY,
                 HttpStatus.OK
                 , desigService.getthelistofDesignation());
     }
 
-    @GetMapping("/Designationbyid")
-    public ResponseEntity<Object> GetTheDesignationByid(@RequestParam("id") String id) {
-        if(ChecifIDisPresentorNot(id))
-        {
-            return  HandleRequest.createResponse(MessageConfig.ID_IS_MISSING,HttpStatus.NOT_FOUND,null);
+    @GetMapping("/DesignationById")
+    public ResponseEntity<Object> GetTheDesignationById(@RequestParam("id") String id) {
+        if (CheckIFIdIsPresentOrNot(id)) {
+            return HandleRequest.createResponse(MessageConfig.ID_IS_MISSING, HttpStatus.NOT_FOUND, null);
         }
         Optional<DesignationDetails> desigoptional = desigService.getthedesignationdetailsbyid(Long.parseLong(id));
         if (desigoptional.isPresent()) {
@@ -52,60 +51,59 @@ public class DesignationController {
     }
 
     @DeleteMapping("/deleteDesignation")
-    public ResponseEntity<Object> DeletetheDesignationByid(@RequestParam("id") String id) {
-        if(ChecifIDisPresentorNot(id))
-        {
-            return  HandleRequest.createResponse(MessageConfig.ID_IS_MISSING,HttpStatus.NOT_FOUND,null);
+    public ResponseEntity<Object> DeleteTheDesignationById(@RequestParam("id") String id) {
+        if (CheckIFIdIsPresentOrNot(id)) {
+            return HandleRequest.createResponse(MessageConfig.ID_IS_MISSING, HttpStatus.NOT_FOUND, null);
+        }
+        Optional<DesignationDetails> designationDetailsOptional = desigService.getthedesignationdetailsbyid(Long.parseLong(id));
+        if (!designationDetailsOptional.get().getIsActive()) {
+            return HandleRequest.createResponse(MessageConfig.DESIGNATION_ALREADY_DELETED, HttpStatus.NOT_ACCEPTABLE, null);
         }
         String response = desigService.Deletethedesignationbyid(Long.parseLong(id));
         return HandleRequest.createResponse(response, HttpStatus.OK, null);
     }
 
-    @PostMapping("/saveDesig")
-    public ResponseEntity<Object> SaveTheDesignationDetials(@RequestParam("designationdata") String DesignationObj) throws JsonProcessingException {
-        DesignationRequestDto dto = objectMapper.readValue(DesignationObj, DesignationRequestDto.class);
-        String checkforValidaion = CheckValidations(dto);
+    @PostMapping("/saveDesignation")
+    public ResponseEntity<Object> SaveTheDesignationDetails(@RequestParam("designationdata") String designation) throws JsonProcessingException {
+        DesignationRequestDto DesignationDto = objectMapper.readValue(designation, DesignationRequestDto.class);
+        String checkforValidaion = CheckValidations(DesignationDto);
         if (checkforValidaion == null) {
-            Optional<DepartmentDetails> deptdetails = departmentService.getthedepartmentbyid(Long.parseLong(dto.getDepartmentId()));
+            Optional<DepartmentDetails> deptdetails = departmentService.getthedepartmentbyid(Long.parseLong(DesignationDto.getDepartmentId()));
             if (deptdetails.isEmpty()) {
                 return HandleRequest.createResponse(MessageConfig.DEPARTMENT_NOT_FOUND, HttpStatus.NOT_FOUND, null);
             }
-            DesignationDetails designationDetails = new DesignationDetails();
-            designationDetails.setDesignationName(dto.getDesignationName());
-            designationDetails.setIsActive(dto.getIsActive());
-            designationDetails.setCreatedDate(LocalDateTime.now());
-            designationDetails.setCreatedBy("User");
-            //designationDetails.setDepartmentDetails(deptdetails.get());
-            designationDetails.setDepartmentId(Long.parseLong(dto.getDepartmentId()));
-            designationDetails.setTotalEmployee(0L);
-            return HandleRequest.createResponse(MessageConfig.DESIGNATION_ADDED_SUCCESSFULLY, HttpStatus.CREATED, desigService.savethedesignation(designationDetails));
+            ResponseEntity<Object> response = desigService.AddTheDesignation(DesignationDto);
+            return HandleRequest.createResponse(MessageConfig.DESIGNATION_ADDED_SUCCESSFULLY, HttpStatus.OK, response.getBody());
         }
         return HandleRequest.createResponse(MessageConfig.OPERATION_FAIL, HttpStatus.NOT_ACCEPTABLE, checkforValidaion);
     }
 
     @PutMapping("/updateDesignation")
-    public ResponseEntity<Object> UpdateTheDesignationDetails(@RequestParam("id") String id, @RequestParam("designationdata") String desingation) throws JsonProcessingException {
-        if(ChecifIDisPresentorNot(id))
-        {
-            return  HandleRequest.createResponse(MessageConfig.ID_IS_MISSING,HttpStatus.NOT_FOUND,null);
+    public ResponseEntity<Object> UpdateTheDesignationDetails(@RequestParam("designationdata") String desingationdto) throws JsonProcessingException {
+
+        DesignationRequestDto designationRequestDto = objectMapper.readValue(desingationdto, DesignationRequestDto.class);
+        String validationResponse = CheckValidationForTheUpdate(designationRequestDto);
+        if (validationResponse != null) {
+            return HandleRequest.createResponse(validationResponse, HttpStatus.NOT_FOUND, null);
         }
-        DesignationRequestDto designationRequestDto = objectMapper.readValue(desingation, DesignationRequestDto.class);
-        Optional<DesignationDetails> desigOptional = desigService.getthedesignationdetailsbyid(Long.parseLong(id));
+        Optional<DesignationDetails> desigOptional = desigService.getthedesignationdetailsbyid(Long.parseLong(designationRequestDto.getDesignationId()));
         Optional<DepartmentDetails> departOptional = departmentService.getthedepartmentbyid(Long.parseLong(designationRequestDto.getDepartmentId()));
         if (departOptional.isEmpty()) {
-            return HandleRequest.createResponse(MessageConfig.DEPARTMENT_NOT_FOUND, HttpStatus.OK, null);
+            return HandleRequest.createResponse(MessageConfig.DEPARTMENT_NOT_FOUND, HttpStatus.NOT_FOUND, null);
         }
         if (desigOptional.isPresent()) {
-            DesignationDetails designationDetails = desigOptional.get();
-            //designationDetails.setDepartmentDetails(departOptional.get());
-            designationDetails.setDepartmentId(Long.parseLong(designationRequestDto.getDepartmentId()));
-            designationDetails.setDesignationName(designationRequestDto.getDesignationName());
-            designationDetails.setUpdatedBy("Admin");
-            designationDetails.setUpdatedDate(LocalDateTime.now());
-            designationDetails.setIsActive(designationRequestDto.getIsActive());
-            return HandleRequest.createResponse(MessageConfig.DESIGNATION_UPDATED_SUCCESSFULLY, HttpStatus.OK, desigService.savethedesignation(designationDetails));
+            if (!desigOptional.get().getDesignationName().equals(designationRequestDto.getDesignationName())) {
+                if (desigService.CheckIfDuplicateDesignationIsAvaliableForthatDepartment(Long.parseLong(designationRequestDto.getDepartmentId()), designationRequestDto.getDesignationName())) {
+                    return HandleRequest.createResponse(MessageConfig.DESIGNATION_NAME_DUPLICATE, HttpStatus.OK, null);
+                }
+            }
+            if (!designationRequestDto.getIsActive()) {
+                return HandleRequest.createResponse(MessageConfig.DESIGNATION_STATUS_CANNOT_SET_inACTIVE, HttpStatus.NOT_ACCEPTABLE, null);
+            }
+            ResponseEntity<Object> response = desigService.UpdateTheDesignation(designationRequestDto);
+            return HandleRequest.createResponse(MessageConfig.DESIGNATION_UPDATED_SUCCESSFULLY, HttpStatus.OK, response.getBody());
         }
-        return HandleRequest.createResponse(MessageConfig.OPERATION_FAIL, HttpStatus.OK, null);
+        return HandleRequest.createResponse(MessageConfig.DESIGNATION_NOT_FOUND, HttpStatus.NOT_FOUND, null);
     }
 
     public String CheckValidations(DesignationRequestDto designationdto) {
@@ -117,16 +115,35 @@ public class DesignationController {
             return MessageConfig.DESIGNATION_NAME_MISSING;
         }
 
-        Optional<DesignationDetails> designationDetailsOptional = desigService.CheckIfDesignatioNmaeExistorNot(designationdto.getDesignationName());
-        if (designationDetailsOptional.isPresent()) {
+        if (desigService.CheckIfDuplicateDesignationIsAvaliableForthatDepartment(Long.parseLong(designationdto.getDepartmentId()), designationdto.getDesignationName())) {
             return MessageConfig.DESIGNATION_NAME_DUPLICATE;
         }
         return null;
     }
-    public Boolean ChecifIDisPresentorNot(String id){
-        if(id==null || id.isEmpty() ){
+
+    public Boolean CheckIFIdIsPresentOrNot(String id) {
+        if (id == null || id.isEmpty()) {
             return true;
         }
-        return  false;
+        return false;
+    }
+
+    public String CheckValidationForTheUpdate(DesignationRequestDto designationRequestDto) {
+        if (designationRequestDto.getDesignationId() == null || designationRequestDto.getDesignationId().isEmpty()) {
+            return MessageConfig.DESIGNATION_IS_MISSING;
+        }
+        if (designationRequestDto.getDesignationName() == null || designationRequestDto.getDesignationName().isEmpty()) {
+            return MessageConfig.DESIGNATION_NAME_MISSING;
+        }
+        if (designationRequestDto.getDepartmentId() == null || designationRequestDto.getDepartmentId().isEmpty()) {
+            return MessageConfig.DEPARTMENT_IS_MISSING;
+        }
+        if (designationRequestDto.getIsActive() == null) {
+            return MessageConfig.STATUS_IS_MISSING;
+        }
+        if (CheckIFIdIsPresentOrNot(designationRequestDto.getDesignationId())) {
+            return MessageConfig.ID_IS_MISSING;
+        }
+        return null;
     }
 }

@@ -13,4 +13,6 @@ public interface DesignationRepository extends JpaRepository<DesignationDetails,
     boolean existsByDepartmentId(Long departmentId);
     List<DesignationDetails> findByDepartmentId(Long departmentId);
     Optional<DesignationDetails> findByDesignationName(String designationName );
+    boolean existsByDepartmentIdAndDesignationName(Long departmentId, String designationName);
+
 }

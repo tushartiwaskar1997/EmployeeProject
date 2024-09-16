@@ -13,9 +13,8 @@ public class DesignationDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long  designationId ;
-    private Long  departmentId ;
+    //private Long  departmentId ;
     private String  designationName ;
-
     private Boolean isActive ;
     private String  createdBy ;
     private String  updatedBy ;

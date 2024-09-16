@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -47,79 +48,94 @@ public class EmployeeController {
         return HandleRequest.createResponse(MessageConfig.OPERATION_DONE_SUCCESSFULLY, HttpStatus.OK, empService.getTheListOfTheEmployees());
     }
 
-    @GetMapping("/getEmpById")
-    public ResponseEntity<Object> GetTheEmployeeByID(@RequestParam("id") String id) {
+    @GetMapping("/getEmpById/{EmpId}")
+    public ResponseEntity<Object> GetTheEmployeeByID(@PathVariable("EmpId") Long id) {
         if (CheckIFIdIsPresentOrNot(id)) {
             return HandleRequest.createResponse(MessageConfig.ID_IS_MISSING, HttpStatus.NOT_FOUND, null);
         }
-        Optional<EmployeeDetails> empOptional = empService.GetTheEmployeeDetailsById(Long.parseLong(id));
+        Optional<EmployeeDetails> empOptional = empService.GetTheEmployeeDetailsById(id);
         if (empOptional.isPresent()) {
             return HandleRequest.createResponse(MessageConfig.OPERATION_DONE_SUCCESSFULLY, HttpStatus.OK, empOptional.get());
         }
         return HandleRequest.createResponse(MessageConfig.EMPLOYEE_NOT_FOUND, HttpStatus.BAD_REQUEST, null);
     }
 
-    @DeleteMapping("/DeleteEmp")
-    public ResponseEntity<Object> DeleteTHeEmployeeById(@RequestParam("id") String id) {
+    @DeleteMapping("/DeleteEmp/{EmpID}")
+    public ResponseEntity<Object> DeleteTHeEmployeeById(@PathVariable("EmpID") Long id) {
         if (CheckIFIdIsPresentOrNot(id)) {
             return HandleRequest.createResponse(MessageConfig.ID_IS_MISSING, HttpStatus.NOT_FOUND, null);
         }
-        ResponseEntity<String> response = empService.deleteTheEmployeeById(Long.parseLong(id));
+        ResponseEntity<String> response = empService.deleteTheEmployeeById(id);
         return HandleRequest.createResponse(response.getBody(), response.getStatusCode(), null);
     }
 
     @PostMapping("/SaveTheEmp")
-    public ResponseEntity<Object> SaveTheEmployee(@RequestParam("employeedata") String empdetails, @RequestParam("image") MultipartFile imagefile) throws JsonProcessingException, IOException {
+    public ResponseEntity<Object> SaveTheEmployee(@RequestParam("employeeData") String empdetails, @RequestParam("image") MultipartFile imagefile) throws JsonProcessingException, IOException {
+
+
         EmployeeRequestDto empdto = objectMapper.readValue(empdetails, EmployeeRequestDto.class);
         String validataioncheck = CheckForTheValidations(empdto);
+
         if (validataioncheck == null) {
-            Optional<DesignationDetails> designationOptionl = desigService.getthedesignationdetailsbyid(Long.parseLong(empdto.getDeignationId()));
+
+            Optional<EmployeeDetails> gettheemaildetails = empService.FindTheEmployeeByEmail(empdto.getEmail());
+            if (gettheemaildetails.isPresent()) {
+                return HandleRequest.createResponse(MessageConfig.DUPLICATE_EMAIL_IS_PRESENT, HttpStatus.NOT_FOUND, null);
+            }
+            if (empService.CheckIfEmployeeOfSameNamePresentORNot(empdto.getEmployeeName())) {
+                return HandleRequest.createResponse(MessageConfig.DUPLICATE_EMPLOYEE_NAME, HttpStatus.NOT_FOUND, null);
+            }
+
+            Optional<DesignationDetails> designationOptionl = desigService.getthedesignationdetailsbyid((empdto.getDesignationId()));
             if (designationOptionl.isEmpty()) {
                 return HandleRequest.createResponse(MessageConfig.DESIGNATION_NOT_FOUND, HttpStatus.NOT_FOUND, null);
             }
             if (!designationOptionl.get().getIsActive()) {
                 return HandleRequest.createResponse(MessageConfig.DESIGNATION_STATUS_IS_NOT_ACTIVE, HttpStatus.OK, null);
             }
-            Optional<DepartmentDetails> deptOptional = deptService.getthedepartmentbyid(Long.parseLong(empdto.getDepartmentId()));
+            Optional<DepartmentDetails> deptOptional = deptService.getthedepartmentbyid((empdto.getDepartmentId()));
             if (deptOptional.isEmpty()) {
                 return HandleRequest.createResponse(MessageConfig.DEPARTMENT_NOT_FOUND, HttpStatus.NOT_FOUND, null);
             }
-            if (designationOptionl.get().getDepartmentId() != deptOptional.get().getId()) {
-                return HandleRequest.createResponse(MessageConfig.DEPARTMENT_MISSED_MATCHED_WITH_DESIGNATION_DEPARTMENT_ID, HttpStatus.NOT_FOUND, null);
-            }
+
             if (!deptOptional.get().getIsActive()) {
                 return HandleRequest.createResponse(MessageConfig.DEPARTMENT_STATUS_IS_NOT_ACTIVE, HttpStatus.NOT_FOUND, null);
             }
             if (imagefile.isEmpty()) {
                 return HandleRequest.createResponse(MessageConfig.IMAGE_IS_MISSING, HttpStatus.NOT_FOUND, null);
             }
-            if(!imagefile.getContentType().equals("image/jpeg") || imagefile.getContentType().equals("image/png")){
-                return  HandleRequest.createResponse(MessageConfig.IMAGE_DATA_TYPE_NOT_PROPER,HttpStatus.NOT_ACCEPTABLE,null);
+            if (!(imagefile.getContentType().equals("image/jpeg") || imagefile.getContentType().equals("image/png"))) {
+                return HandleRequest.createResponse(MessageConfig.IMAGE_DATA_TYPE_NOT_PROPER, HttpStatus.NOT_ACCEPTABLE, null);
             }
             ResponseEntity<Object> response = empService.AddTheEmployeeDetails(empdto, imagefile);
             return HandleRequest.createResponse(MessageConfig.EMPLOYEE_ADDED_SUCCESSFULLY, response.getStatusCode(), response.getBody());
         }
-        return HandleRequest.createResponse(MessageConfig.OPERATION_FAIL, HttpStatus.NOT_ACCEPTABLE, validataioncheck);
+        return HandleRequest.createResponse(validataioncheck, HttpStatus.NOT_ACCEPTABLE, null);
     }
 
     @PutMapping("/UpdateEmp")
-    public ResponseEntity<Object> UpdateTheEmployee(@RequestParam("employeedata") String empdetails, @RequestParam("image") MultipartFile imagefile) throws JsonProcessingException, IOException {
-
+    public ResponseEntity<Object> UpdateTheEmployee( @RequestParam("employeeData") String empdetails, @RequestParam("image") MultipartFile imagefile) throws JsonProcessingException, IOException {
         EmployeeRequestDto empdto = objectMapper.readValue(empdetails, EmployeeRequestDto.class);
         String validationCheck = CheckValidationForUpdateDto(empdto);
         if (validationCheck != null) {
             return HandleRequest.createResponse(validationCheck, HttpStatus.NOT_FOUND, null);
         }
 
-        Optional<EmployeeDetails> empOptional = empService.GetTheEmployeeDetailsById(Long.parseLong(empdto.getEmployeeId()));
+        Optional<EmployeeDetails> empOptional = empService.GetTheEmployeeDetailsById((empdto.getEmployeeId()));
         if (empOptional.isPresent()) {
             EmployeeDetails emp = empOptional.get();
+
+            if (!emp.getEmpName().equals(empdto.getEmployeeName())) {
+                if (empService.CheckIfEmployeeOfSameNamePresentORNot(empdto.getEmployeeName())) {
+                    return HandleRequest.createResponse(MessageConfig.DUPLICATE_EMPLOYEE_NAME, HttpStatus.NOT_ACCEPTABLE, null);
+                }
+            }
             if (!emp.getEmail().equals(empdto.getEmail())) {
                 if (empService.FindTheEmployeeByEmail(empdto.getEmail()).isPresent()) {
                     return HandleRequest.createResponse(MessageConfig.DUPLICATE_EMAIL_IS_PRESENT, HttpStatus.NOT_ACCEPTABLE, null);
                 }
             }
-            Optional<DesignationDetails> designationOptionl = desigService.getthedesignationdetailsbyid(Long.parseLong(empdto.getDeignationId()));
+            Optional<DesignationDetails> designationOptionl = desigService.getthedesignationdetailsbyid((empdto.getDesignationId()));
             if (designationOptionl.isEmpty()) {
                 return HandleRequest.createResponse(MessageConfig.DESIGNATION_NOT_FOUND, HttpStatus.NOT_FOUND, null);
             }
@@ -127,7 +143,7 @@ public class EmployeeController {
                 return HandleRequest.createResponse(MessageConfig.DESIGNATION_STATUS_IS_NOT_ACTIVE, HttpStatus.OK, null);
             }
 
-            Optional<DepartmentDetails> departmentOptional = deptService.getthedepartmentbyid(Long.parseLong(empdto.getDepartmentId()));
+            Optional<DepartmentDetails> departmentOptional = deptService.getthedepartmentbyid((empdto.getDepartmentId()));
             if (departmentOptional.isEmpty()) {
                 return HandleRequest.createResponse(MessageConfig.DEPARTMENT_NOT_FOUND, HttpStatus.NOT_FOUND, null);
             }
@@ -137,16 +153,24 @@ public class EmployeeController {
             if (imagefile.isEmpty()) {
                 return HandleRequest.createResponse(MessageConfig.IMAGE_IS_MISSING, HttpStatus.NOT_FOUND, null);
             }
-            if(imagefile.getContentType().equals("image/jpeg") || imagefile.getContentType().equals("image/png")){
-                return  HandleRequest.createResponse(MessageConfig.IMAGE_DATA_TYPE_NOT_PROPER,HttpStatus.NOT_ACCEPTABLE,null);
+            if (!(imagefile.getContentType().equals("image/jpeg") || imagefile.getContentType().equals("image/png"))) {
+                return HandleRequest.createResponse(MessageConfig.IMAGE_DATA_TYPE_NOT_PROPER, HttpStatus.NOT_ACCEPTABLE, null);
             }
-            if (designationOptionl.get().getDepartmentId() != departmentOptional.get().getId()) {
-                return HandleRequest.createResponse(MessageConfig.DEPARTMENT_MISSED_MATCHED_WITH_DESIGNATION_DEPARTMENT_ID, HttpStatus.NOT_FOUND, null);
+            if(!emp.getIsActive())
+            {
+                if(emp.getDesignationDetails().getDesignationId()!= empdto.getDesignationId())
+                {
+                    return HandleRequest.createResponse(MessageConfig.EMPLOYEE_STATUS_IS_NOT_ACTIVE_DESIGNATION_NOT_CHANGE ,HttpStatus.NOT_ACCEPTABLE,null);
+                }
+
+                if(emp.getDepartmentDetails().getId() != empdto.getDepartmentId()){
+                    return HandleRequest.createResponse(MessageConfig.EMPLOYEE_STATUS_IS_NOT_ACTIVE_DEPARTMENT_NOT_CHANGE ,HttpStatus.NOT_ACCEPTABLE,null);
+                }
             }
             ResponseEntity<Object> response = empService.UpdateTheEmployee(empdto, imagefile);
             return HandleRequest.createResponse(MessageConfig.EMPLOYEE_UPDATED_SUCCESSFULLY, HttpStatus.CREATED, response.getBody());
         }
-        return HandleRequest.createResponse(MessageConfig.OPERATION_FAIL, HttpStatus.NOT_ACCEPTABLE, null);
+        return HandleRequest.createResponse(MessageConfig.EMPLOYEE_NOT_FOUND, HttpStatus.NOT_ACCEPTABLE, null);
     }
 
     @GetMapping("/email")
@@ -155,62 +179,62 @@ public class EmployeeController {
         return "done ";
     }
 
-    @GetMapping("/empStatusChange")
-    public ResponseEntity<Object> SetTheEmployeeStatusToTrue(@RequestParam("id") String id) {
+    @GetMapping("/empStatusChange/{EmpID}")
+    public ResponseEntity<Object> SetTheEmployeeStatusToTrue(@PathVariable("EmpID") Long id) {
         if (CheckIFIdIsPresentOrNot(id)) {
             return HandleRequest.createResponse(MessageConfig.ID_IS_MISSING, HttpStatus.NOT_FOUND, null);
         }
-        Optional<EmployeeDetails> employeeDetailsOptional = empService.GetTheEmployeeDetailsById(Long.parseLong(id));
+        Optional<EmployeeDetails> employeeDetailsOptional = empService.GetTheEmployeeDetailsById(id);
         if (employeeDetailsOptional.isPresent()) {
-            ResponseEntity<Object> response = empService.ChangeEmployeeStatusToTrue(Long.parseLong(id));
+            if (employeeDetailsOptional.get().getIsActive()) {
+                return HandleRequest.createResponse(MessageConfig.EMPLOYEE_IS_ALREADY_ACTIVE, HttpStatus.NOT_ACCEPTABLE, null);
+            }
+            ResponseEntity<Object> response = empService.ChangeEmployeeStatusToTrue(id);
             return HandleRequest.createResponse(MessageConfig.EMPLOYEE_STATUS_CHANGE_TO_ACTIVE, response.getStatusCode(), response.getBody());
         }
-        return HandleRequest.createResponse(MessageConfig.OPERATION_FAIL, HttpStatus.NOT_FOUND, MessageConfig.EMPLOYEE_NOT_FOUND);
+        return HandleRequest.createResponse(MessageConfig.EMPLOYEE_NOT_FOUND, HttpStatus.NOT_FOUND, null);
     }
 
     ;
 
-
     public String CheckForTheValidations(EmployeeRequestDto employeeRequestDto) {
 
-        if (employeeRequestDto.getDeignationId() == null || employeeRequestDto.getDeignationId().isEmpty()) {
+        if (employeeRequestDto.getDesignationId() == null ) {
             return MessageConfig.DESIGNATION_IS_MISSING;
         }
-        if (employeeRequestDto.getDepartmentId() == null || employeeRequestDto.getDepartmentId().isEmpty()) {
+        if (employeeRequestDto.getDepartmentId() == null ) {
             return MessageConfig.DEPARTMENT_IS_MISSING;
         }
         if (employeeRequestDto.getEmployeeName() == null || employeeRequestDto.getEmployeeName().isEmpty()) {
             return MessageConfig.EMP_NAME_MISSING;
         }
-
-        Optional<EmployeeDetails> gettheemaildetails = empService.FindTheEmployeeByEmail(employeeRequestDto.getEmail());
-        if (gettheemaildetails.isPresent()) {
-            return MessageConfig.DUPLICATE_EMAIL_IS_PRESENT;
-        }
-        if (empService.CheckIfEmployeeOfSameNamePresentORNot(employeeRequestDto.getEmployeeName())) {
-            return MessageConfig.DUPLICATE_EMPLOYEE_NAME;
+        if (employeeRequestDto.getEmail() == null || employeeRequestDto.getEmail().isEmpty()) {
+            return MessageConfig.EMAIL_NOT_FOUND;
         }
         return null;
     }
 
-    public Boolean CheckIFIdIsPresentOrNot(String id) {
-        if (id == null || id.isEmpty()) {
+    public Boolean CheckIFIdIsPresentOrNot(Long id) {
+        if (id == null) {
             return true;
         }
         return false;
     }
 
     public String CheckValidationForUpdateDto(EmployeeRequestDto employeeRequestDto) {
-        if (employeeRequestDto.getDeignationId() == null || employeeRequestDto.getDeignationId().isEmpty()) {
+        if (employeeRequestDto.getDesignationId() == null) {
             return MessageConfig.DESIGNATION_IS_MISSING;
         }
-        if (employeeRequestDto.getDepartmentId() == null || employeeRequestDto.getDepartmentId().isEmpty()) {
+        if (employeeRequestDto.getDepartmentId() == null) {
             return MessageConfig.DEPARTMENT_IS_MISSING;
         }
         if (employeeRequestDto.getEmployeeName() == null || employeeRequestDto.getEmployeeName().isEmpty()) {
             return MessageConfig.EMP_NAME_MISSING;
         }
-        if (CheckIFIdIsPresentOrNot(employeeRequestDto.getEmployeeId())) {
+        if (employeeRequestDto.getEmail() == null || employeeRequestDto.getEmail().isEmpty()) {
+            return MessageConfig.EMAIL_NOT_FOUND;
+        }
+        if (CheckIFIdIsPresentOrNot((employeeRequestDto.getEmployeeId()))) {
             return MessageConfig.ID_IS_MISSING;
         }
         return null;

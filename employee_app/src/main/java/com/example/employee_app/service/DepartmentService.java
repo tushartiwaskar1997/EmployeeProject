@@ -8,6 +8,7 @@ import com.example.employee_app.model.DesignationDetails;
 import com.example.employee_app.model.EmployeeDetails;
 import com.example.employee_app.repository.DepartmentRepository;
 import com.example.employee_app.repository.DesignationRepository;
+import com.example.employee_app.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.PreparedStatement;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +27,8 @@ public class DepartmentService {
     private DepartmentRepository departmentRepository;
     @Autowired
     private DesignationRepository designationRepository;
+    @Autowired
+    private EmployeeRepository employeeRepository;
 
     public List<DepartmentDetails> getthedepartmentlist() {
         return departmentRepository.findAll();
@@ -48,7 +52,7 @@ public class DepartmentService {
                 departmentRepository.save(departmentDetails);
                 return MessageConfig.DEPARTMENT_DELETED_SUCCESSFULLY;
             } else {
-                return MessageConfig.DESIGNATION_CANNOT_BE_DELETED;
+                return MessageConfig.DEPARTMENT_ASSOCIATED_WITH_EMPLOYEE;
             }
         }
         return MessageConfig.DEPARTMENT_NOT_FOUND;
@@ -56,7 +60,7 @@ public class DepartmentService {
 
     public ResponseEntity<Object> AddTheDepartment(DepartmentRequestDto departmentdto) {
         DepartmentDetails dept = new DepartmentDetails();
-        dept.setDepartmentName(departmentdto.getDepartmentName().toLowerCase());
+        dept.setDepartmentName(departmentdto.getDepartmentName());
         dept.setIsActive(true);
         dept.setCreatedDate(LocalDateTime.now());
         dept.setCreatedBy("User");
@@ -65,7 +69,7 @@ public class DepartmentService {
     }
 
     public ResponseEntity<Object> UpdateTheDepartment(DepartmentRequestDto departmentRequestDto) {
-        Optional<DepartmentDetails> deptoptional = getthedepartmentbyid(Long.parseLong(departmentRequestDto.getDepartmentId()));
+        Optional<DepartmentDetails> deptoptional = getthedepartmentbyid((departmentRequestDto.getDepartmentId()));
         DepartmentDetails dept = deptoptional.get();
         if (!dept.getDepartmentName().equals(departmentRequestDto.getDepartmentName().toLowerCase())) {
             Optional<DepartmentDetails> checkifDepartmentpresent = chekifDepartmentispresent(departmentRequestDto.getDepartmentName().toLowerCase());
@@ -75,12 +79,6 @@ public class DepartmentService {
                 dept.setDepartmentName(departmentRequestDto.getDepartmentName().toLowerCase());
             }
         }
-//        if(!departmentRequestDto.getIsActive()){
-//            if(dept.getTotalEmployee()<=0){
-//                dept.setIsActive(departmentRequestDto.getIsActive());
-//            }
-//            return  new ResponseEntity<>(MessageConfig.DEPARTMENT_STATUS_CANNOT_SET_inACTIVE,HttpStatus.NOT_ACCEPTABLE);
-//        }
         dept.setIsActive(departmentRequestDto.getIsActive());
         dept.setUpdatedDate(LocalDateTime.now());
         dept.setUpdatedBy("Admin");
@@ -96,17 +94,23 @@ public class DepartmentService {
         return departmentRepository.findBydepartmentName(depname);
     }
 
-    public boolean CheckIfanyDesignationExistForGivenDepartment(Long id) {
-        return designationRepository.existsByDepartmentId(id);
-    }
-
     public Boolean CheckIfANyDesiagnatioisStatustrue(Long id) {
-        List<DesignationDetails> list = designationRepository.findByDepartmentId(id);
-        for (DesignationDetails desig : list) {
-            if (desig.getIsActive()) {
-                return true;
+        List<EmployeeDetails> EmpListASPerDeptId = employeeRepository.GetTheListOfEmployeeBYDepartmentId(id);
+        if (!EmpListASPerDeptId.isEmpty()) {
+            List<DesignationDetails> DesignationList = new ArrayList<>();
+            for (EmployeeDetails emp : EmpListASPerDeptId) {
+                if (emp.getDesignationDetails().getIsActive()) {
+                    return true;
+                }
             }
         }
+
+        //List<DesignationDetails> list = designationRepository.findByDepartmentId(id);
+//        for (DesignationDetails desig : list) {
+//            if (desig.getIsActive()) {
+//                return true;
+//            }
+//        }
         return false;
     }
 }

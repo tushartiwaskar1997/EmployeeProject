@@ -2,7 +2,6 @@ package com.example.employee_app.service;
 
 import com.example.employee_app.constanst.MessageConfig;
 import com.example.employee_app.dto.EmployeeRequestDto;
-import com.example.employee_app.dto.HandleRequest;
 import com.example.employee_app.model.DepartmentDetails;
 import com.example.employee_app.model.DesignationDetails;
 import com.example.employee_app.model.EmployeeDetails;
@@ -47,7 +46,6 @@ public class EmployeeService {
             if (!Employee.getIsActive()) {
                 return new ResponseEntity<>(MessageConfig.EMPLOYEE_ALREADY_DELETED, HttpStatus.OK);
             }
-
             DepartmentDetails departmentdetails = Employee.getDepartmentDetails();
             departmentdetails.setTotalEmployee(departmentdetails.getTotalEmployee() - 1L);
             departmentdetails.setUpdatedDate(LocalDateTime.now());
@@ -73,9 +71,9 @@ public class EmployeeService {
         EmployeeDetails emp = new EmployeeDetails();
         emp.setEmpName(empdto.getEmployeeName());
         emp.setEmail(empdto.getEmail());
-        Optional<DesignationDetails> designationOptional = designationService.getthedesignationdetailsbyid(Long.parseLong(empdto.getDeignationId()));
+        Optional<DesignationDetails> designationOptional = designationService.getthedesignationdetailsbyid((empdto.getDesignationId()));
         emp.setDesignationDetails(designationOptional.get());
-        Optional<DepartmentDetails> deptOptional = departmentService.getthedepartmentbyid(Long.parseLong(empdto.getDepartmentId()));
+        Optional<DepartmentDetails> deptOptional = departmentService.getthedepartmentbyid((empdto.getDepartmentId()));
         emp.setDepartmentDetails(deptOptional.get());
         emp.setCreatedBy("user");
         emp.setCreatedDate(LocalDateTime.now());
@@ -87,16 +85,16 @@ public class EmployeeService {
     }
 
     public ResponseEntity<Object> UpdateTheEmployee(EmployeeRequestDto empdto, MultipartFile imagefile) throws IOException {
-        Optional<EmployeeDetails> empOptional = GetTheEmployeeDetailsById(Long.parseLong(empdto.getEmployeeId()));
+        Optional<EmployeeDetails> empOptional = GetTheEmployeeDetailsById((empdto.getEmployeeId()));
         EmployeeDetails emp_old_Object = empOptional.get();
 
         DesignationDetails emp_old_Desination = emp_old_Object.getDesignationDetails();
         DepartmentDetails emp_old_Department = emp_old_Object.getDepartmentDetails();
 
-        Optional<DesignationDetails> designationOptionl_new = designationService.getthedesignationdetailsbyid(Long.parseLong(empdto.getDeignationId()));
+        Optional<DesignationDetails> designationOptionl_new = designationService.getthedesignationdetailsbyid((empdto.getDesignationId()));
         DesignationDetails emp_new_Desigantion = designationOptionl_new.get();
 
-        if (emp_old_Desination.getDesignationId() != Long.parseLong(empdto.getDeignationId())) {
+        if (emp_old_Desination.getDesignationId() != (empdto.getDesignationId())) {
             emp_old_Desination.setTotalEmployee(emp_old_Desination.getTotalEmployee() - 1l);
             emp_old_Desination.setUpdatedBy("Admin");
             emp_old_Desination.setUpdatedDate(LocalDateTime.now());
@@ -107,11 +105,11 @@ public class EmployeeService {
             emp_new_Desigantion.setUpdatedDate(LocalDateTime.now());
             designationService.savethedesignation(emp_new_Desigantion);
         }
-        Optional<DepartmentDetails> departmentOptional_new = departmentService.getthedepartmentbyid(Long.parseLong(empdto.getDepartmentId()));
+        Optional<DepartmentDetails> departmentOptional_new = departmentService.getthedepartmentbyid((empdto.getDepartmentId()));
 
         DepartmentDetails emp_new_Department = departmentOptional_new.get();
 
-        if (emp_old_Department.getId() != Long.parseLong(empdto.getDepartmentId())) {
+        if (emp_old_Department.getId() != (empdto.getDepartmentId())) {
             emp_old_Department.setTotalEmployee(emp_old_Department.getTotalEmployee() - 1L);
             emp_old_Department.setUpdatedBy("Admin");
             emp_old_Department.setUpdatedDate(LocalDateTime.now());
@@ -145,7 +143,7 @@ public class EmployeeService {
         if (!empObj.getDesignationDetails().getIsActive()) {
             DepartmentDetails dept = empObj.getDepartmentDetails();
             dept.setIsActive(true);
-            dept.setUpdatedBy("Admin");
+            dept.setUpdatedBy("SuperUser");
             dept.setUpdatedDate(LocalDateTime.now());
             departmentService.savethedepartmentdetails(dept);
         }
@@ -153,7 +151,7 @@ public class EmployeeService {
         if (!empObj.getDesignationDetails().getIsActive()) {
             DesignationDetails desig = empObj.getDesignationDetails();
             desig.setIsActive(true);
-            desig.setUpdatedBy("Admin");
+            desig.setUpdatedBy("SuperUser");
             desig.setUpdatedDate(LocalDateTime.now());
             designationService.savethedesignation(desig);
         }
@@ -162,12 +160,15 @@ public class EmployeeService {
         empObj.setIsActive(true);
         empObj.setUpdatedBy("Super_user");
         empObj.setUpdatedDate(LocalDateTime.now());
-        //HandleRequest.createResponse(MessageConfig.EMPLOYEE_STATUS_CHANGE_TO_ACTIVE,HttpStatus.OK,empService.Savetheemployee(empObj));
         return new ResponseEntity<>(employeeRepository.save(empObj), HttpStatus.OK);
     }
 
     public Optional<EmployeeDetails> FindTheEmployeeByEmail(String email) {
         return employeeRepository.findByEmail(email);
+    }
+
+    public List<EmployeeDetails> GetTheListOfEmployeeASPerTheDepartmentID(Long id) {
+        return employeeRepository.GetTheListOfEmployeeBYDepartmentId(id);
     }
 
     public List<EmployeeDetails> FindTheListOfEmployeesAsPerTheMonthAndDate(int month, int day) {

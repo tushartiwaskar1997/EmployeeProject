@@ -9,10 +9,10 @@ import java.util.Optional;
 
 @Repository
 public interface DesignationRepository extends JpaRepository<DesignationDetails,Long> {
-    //boolean existsByDepartmentDetails_Id(Long departmentId);
-    boolean existsByDepartmentId(Long departmentId);
-    List<DesignationDetails> findByDepartmentId(Long departmentId);
+
+   // boolean existsByDepartmentId(Long departmentId);
+   // List<DesignationDetails> findByDepartmentId(Long departmentId);
     Optional<DesignationDetails> findByDesignationName(String designationName );
-    boolean existsByDepartmentIdAndDesignationName(Long departmentId, String designationName);
+   //boolean existsByDepartmentIdAndDesignationName(Long departmentId, String designationName);
 
 }

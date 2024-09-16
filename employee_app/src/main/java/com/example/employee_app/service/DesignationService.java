@@ -2,8 +2,7 @@ package com.example.employee_app.service;
 
 import com.example.employee_app.constanst.MessageConfig;
 import com.example.employee_app.dto.DesignationRequestDto;
-import com.example.employee_app.dto.HandleRequest;
-import com.example.employee_app.model.DepartmentDetails;
+
 import com.example.employee_app.model.DesignationDetails;
 import com.example.employee_app.repository.DesignationRepository;
 import com.example.employee_app.repository.EmployeeRepository;
@@ -58,42 +57,28 @@ public class DesignationService {
         designationDetails.setIsActive(true);
         designationDetails.setCreatedDate(LocalDateTime.now());
         designationDetails.setCreatedBy("User");
-        designationDetails.setDepartmentId(Long.parseLong(designationDto.getDepartmentId()));
+        //designationDetails.setDepartmentId(Long.parseLong(designationDto.getDepartmentId()));
         designationDetails.setTotalEmployee(0L);
         return new ResponseEntity<>(designationRepository.save(designationDetails), HttpStatus.CREATED);
     }
 
     public ResponseEntity<Object> UpdateTheDesignation(DesignationRequestDto designationDto) {
-        Optional<DesignationDetails> desigOptional = getthedesignationdetailsbyid(Long.parseLong(designationDto.getDesignationId()));
-        Optional<DepartmentDetails> departOptional = departmentService.getthedepartmentbyid(Long.parseLong(designationDto.getDepartmentId()));
-
+        Optional<DesignationDetails> desigOptional = getthedesignationdetailsbyid((designationDto.getDesignationId()));
         DesignationDetails designationDetails = desigOptional.get();
-        designationDetails.setDepartmentId(Long.parseLong(designationDto.getDepartmentId()));
         designationDetails.setDesignationName(designationDto.getDesignationName());
         designationDetails.setUpdatedBy("Admin");
         designationDetails.setUpdatedDate(LocalDateTime.now());
         designationDetails.setIsActive(designationDto.getIsActive());
         return new ResponseEntity<>(designationRepository.save(designationDetails), HttpStatus.OK);
-
     }
 
     public DesignationDetails savethedesignation(DesignationDetails designationDetails) {
         return designationRepository.save(designationDetails);
     }
 
-    public boolean CheckifDesignationisRefferedtoAnyEmployee(Long id) {
-        return employeeRepository.existsByDesignationDetails_DesignationId(id);
-    }
-
-    public List<DesignationDetails> GetTheListOfDesigantionAsperTheDeptid(Long id) {
-        return designationRepository.findByDepartmentId(id);
-    }
 
     public Optional<DesignationDetails> CheckIfDesignatioNmaeExistorNot(String name) {
         return designationRepository.findByDesignationName(name);
     }
 
-    public Boolean CheckIfDuplicateDesignationIsAvaliableForthatDepartment(Long departmentId, String designationName) {
-        return designationRepository.existsByDepartmentIdAndDesignationName(departmentId, designationName);
-    }
 }

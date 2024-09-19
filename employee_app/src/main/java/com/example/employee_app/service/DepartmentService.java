@@ -2,7 +2,6 @@ package com.example.employee_app.service;
 
 import com.example.employee_app.constanst.MessageConfig;
 import com.example.employee_app.dto.DepartmentRequestDto;
-import com.example.employee_app.dto.HandleRequest;
 import com.example.employee_app.model.DepartmentDetails;
 import com.example.employee_app.model.DesignationDetails;
 import com.example.employee_app.model.EmployeeDetails;
@@ -14,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.sql.PreparedStatement;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,32 +28,22 @@ public class DepartmentService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
-    public List<DepartmentDetails> getthedepartmentlist() {
+    public List<DepartmentDetails> GetTheDepartmentList() {
         return departmentRepository.findAll();
     }
 
-    public Optional<DepartmentDetails> getthedepartmentbyid(Long id) {
+    public Optional<DepartmentDetails> GetTheDepartmentById(Long id) {
         return departmentRepository.findById(id);
     }
 
-    public String deletethedepartmentbyid(Long id) {
-        Optional<DepartmentDetails> departmentOptional = getthedepartmentbyid(id);
-        if (departmentOptional.isPresent()) {
-            DepartmentDetails departmentDetails = departmentOptional.get();
-            if (departmentDetails.getTotalEmployee() == 0) {
-                if (CheckIfANyDesiagnatioisStatustrue(id)) {
-                    return MessageConfig.DEPARTMENT_CANNOT_BE_DELETED;
-                }
-                departmentDetails.setIsActive(false);
-                departmentDetails.setUpdatedBy("Admin");
-                departmentDetails.setUpdatedDate(LocalDateTime.now());
-                departmentRepository.save(departmentDetails);
-                return MessageConfig.DEPARTMENT_DELETED_SUCCESSFULLY;
-            } else {
-                return MessageConfig.DEPARTMENT_ASSOCIATED_WITH_EMPLOYEE;
-            }
-        }
-        return MessageConfig.DEPARTMENT_NOT_FOUND;
+    public String DeleteTheDepartmentById(Long id) {
+        Optional<DepartmentDetails> departmentOptional = GetTheDepartmentById(id);
+        DepartmentDetails departmentDetails = departmentOptional.get();
+        departmentDetails.setIsActive(false);
+        departmentDetails.setUpdatedBy("Admin");
+        departmentDetails.setUpdatedDate(LocalDateTime.now());
+        departmentRepository.save(departmentDetails);
+        return MessageConfig.DEPARTMENT_DELETED_SUCCESSFULLY;
     }
 
     public ResponseEntity<Object> AddTheDepartment(DepartmentRequestDto departmentdto) {
@@ -69,10 +57,10 @@ public class DepartmentService {
     }
 
     public ResponseEntity<Object> UpdateTheDepartment(DepartmentRequestDto departmentRequestDto) {
-        Optional<DepartmentDetails> deptoptional = getthedepartmentbyid((departmentRequestDto.getDepartmentId()));
+        Optional<DepartmentDetails> deptoptional = GetTheDepartmentById((departmentRequestDto.getDepartmentId()));
         DepartmentDetails dept = deptoptional.get();
         if (!dept.getDepartmentName().equals(departmentRequestDto.getDepartmentName().toLowerCase())) {
-            Optional<DepartmentDetails> checkifDepartmentpresent = chekifDepartmentispresent(departmentRequestDto.getDepartmentName().toLowerCase());
+            Optional<DepartmentDetails> checkifDepartmentpresent = CheckIfDepartmentIsPresent(departmentRequestDto.getDepartmentName().toLowerCase());
             if (checkifDepartmentpresent.isPresent()) {
                 return new ResponseEntity<>(MessageConfig.DEPARTMENT_ALREADY_EXIST + "service", HttpStatus.NOT_ACCEPTABLE);
             } else {
@@ -85,16 +73,16 @@ public class DepartmentService {
         return new ResponseEntity<>(departmentRepository.save(dept), HttpStatus.OK);
     }
 
-    public DepartmentDetails savethedepartmentdetails(DepartmentDetails dept) {
+    public DepartmentDetails SaveTheDepartmentDetails(DepartmentDetails dept) {
         return departmentRepository.save(dept);
     }
 
 
-    public Optional<DepartmentDetails> chekifDepartmentispresent(String depname) {
+    public Optional<DepartmentDetails> CheckIfDepartmentIsPresent(String depname) {
         return departmentRepository.findBydepartmentName(depname);
     }
 
-    public Boolean CheckIfANyDesiagnatioisStatustrue(Long id) {
+    public Boolean CheckIfAnyDesignationIsStatusTrue(Long id) {
         List<EmployeeDetails> EmpListASPerDeptId = employeeRepository.GetTheListOfEmployeeBYDepartmentId(id);
         if (!EmpListASPerDeptId.isEmpty()) {
             List<DesignationDetails> DesignationList = new ArrayList<>();
@@ -104,13 +92,6 @@ public class DepartmentService {
                 }
             }
         }
-
-        //List<DesignationDetails> list = designationRepository.findByDepartmentId(id);
-//        for (DesignationDetails desig : list) {
-//            if (desig.getIsActive()) {
-//                return true;
-//            }
-//        }
         return false;
     }
 }

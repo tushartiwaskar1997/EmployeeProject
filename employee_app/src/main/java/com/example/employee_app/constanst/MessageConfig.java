@@ -17,7 +17,7 @@ public class MessageConfig {
     public static final String EMPLOYEE_ALREADY_DELETED = "Employee already deleted please check .";
     public static final String EMPLOYEE_STATUS_IS_NOT_ACTIVE_DESIGNATION_NOT_CHANGE = "Employee status is inactive hence designation cannot be change .";
     public static final String EMPLOYEE_STATUS_IS_NOT_ACTIVE_DEPARTMENT_NOT_CHANGE = "Employee status is inactive hence department cannot be change .";
-    ///checjk
+
     //Department
     public static final String DEPARTMENT_ADDED_SUCCESSFULLY = "Department added successfully .";
     public static final String DEPARTMENT_DELETED_SUCCESSFULLY = "Department deleted successfully .";
@@ -30,6 +30,7 @@ public class MessageConfig {
     public static final String DEPARTMENT_STATUS_IS_NOT_ACTIVE = "Department status is not active  employee cannot be allotted .";
     public static final String DEPARTMENT_STATUS_CANNOT_SET_inACTIVE = "Not have permission to set the department as inactive ,only you can activate it .";
     public static final String DEPARTMENT_ASSOCIATED_WITH_EMPLOYEE = "Department cannot be deleted as employee associated to it is active .";
+    public static final String DEPARTMENT_ALREADY_DELETED ="Department is already inactive please check  .";
     //Designation
     public static final String DESIGNATION_ADDED_SUCCESSFULLY = "Designation added successfully .";
     public static final String DESIGNATION_DELETED_SUCCESSFULLY = "Designation deleted successfully .";

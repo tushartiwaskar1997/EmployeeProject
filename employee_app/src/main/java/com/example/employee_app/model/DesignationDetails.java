@@ -12,8 +12,7 @@ public class DesignationDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long  designationId ;
-    //private Long  departmentId ;
+    private Long  id ;
     private String  designationName ;
     private Boolean isActive ;
     private String  createdBy ;
@@ -21,10 +20,5 @@ public class DesignationDetails {
     private LocalDateTime createdDate ;
     private LocalDateTime updatedDate ;
     private Long totalEmployee ;
-
-
-//    @ManyToOne
-//    @JoinColumn(name = "departmentid", referencedColumnName ="id")
-//    private DepartmentDetails  departmentDetails ;
 
 }

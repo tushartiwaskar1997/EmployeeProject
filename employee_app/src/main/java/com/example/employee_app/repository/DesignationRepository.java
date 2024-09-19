@@ -8,11 +8,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface DesignationRepository extends JpaRepository<DesignationDetails,Long> {
+public interface DesignationRepository extends JpaRepository<DesignationDetails, Long> {
 
-   // boolean existsByDepartmentId(Long departmentId);
-   // List<DesignationDetails> findByDepartmentId(Long departmentId);
-    Optional<DesignationDetails> findByDesignationName(String designationName );
-   //boolean existsByDepartmentIdAndDesignationName(Long departmentId, String designationName);
+    Optional<DesignationDetails> findByDesignationName(String designationName);
 
 }

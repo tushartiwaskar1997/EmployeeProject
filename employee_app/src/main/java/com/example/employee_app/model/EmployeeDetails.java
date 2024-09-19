@@ -15,7 +15,7 @@ public class EmployeeDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
     private String  empName ;
     private LocalDate dbo ;
     private String email;

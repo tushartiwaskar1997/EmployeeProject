@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HandleRequest {
+public class ResponseHandeler {
 
     public static ResponseEntity<Object> createResponse(String message , HttpStatus status ,Object response){
         Map<String ,Object>  map =  new HashMap<>();

@@ -41,7 +41,7 @@ public class DesignationService {
         designationDetails.setUpdatedBy("Admin");
         designationDetails.setUpdatedDate(LocalDateTime.now());
         designationRepository.save(designationDetails);
-        return MessageConfig.DESIGNATION_DELETED_SUCCESSFULLY;
+        return MessageConfig.SUCCESS_DESIGNATION_DELETED;
 
     }
 
@@ -62,7 +62,7 @@ public class DesignationService {
         designationDetails.setDesignationName(designationDto.getDesignationName());
         designationDetails.setUpdatedBy("Admin");
         designationDetails.setUpdatedDate(LocalDateTime.now());
-        designationDetails.setIsActive(designationDto.getIsActive());
+        designationDetails.setIsActive(true);
         return new ResponseEntity<>(designationRepository.save(designationDetails), HttpStatus.OK);
     }
 
@@ -70,9 +70,15 @@ public class DesignationService {
         designationRepository.save(designationDetails);
     }
 
-
     public Optional<DesignationDetails> CheckIfDesignationNameExistOrNot(String name) {
         return designationRepository.findByDesignationName(name);
+    }
+
+    public DesignationDetails UpdateTheDesignationStatusById(DesignationDetails designationDetails){
+        designationDetails.setUpdatedDate(LocalDateTime.now());
+        designationDetails.setUpdatedBy("Admin");
+        designationDetails.setIsActive(true);
+        return designationRepository.save(designationDetails);
     }
 
 }

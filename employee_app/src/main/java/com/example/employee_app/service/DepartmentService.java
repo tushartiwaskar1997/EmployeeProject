@@ -43,34 +43,32 @@ public class DepartmentService {
         departmentDetails.setUpdatedBy("Admin");
         departmentDetails.setUpdatedDate(LocalDateTime.now());
         departmentRepository.save(departmentDetails);
-        return MessageConfig.DEPARTMENT_DELETED_SUCCESSFULLY;
+        return MessageConfig.SUCCESS_DEPARTMENT_DELETED;
     }
 
-    public ResponseEntity<Object> AddTheDepartment(DepartmentRequestDto departmentdto) {
+    public DepartmentDetails AddTheDepartment(DepartmentRequestDto departmentdto) {
         DepartmentDetails dept = new DepartmentDetails();
         dept.setDepartmentName(departmentdto.getDepartmentName());
         dept.setIsActive(true);
         dept.setCreatedDate(LocalDateTime.now());
         dept.setCreatedBy("User");
         dept.setTotalEmployee(0L);
-        return new ResponseEntity<>(departmentRepository.save(dept), HttpStatus.CREATED);
+        return departmentRepository.save(dept);
     }
 
-    public ResponseEntity<Object> UpdateTheDepartment(DepartmentRequestDto departmentRequestDto) {
+    public DepartmentDetails UpdateTheDepartment(DepartmentRequestDto departmentRequestDto) {
         Optional<DepartmentDetails> deptoptional = GetTheDepartmentById((departmentRequestDto.getDepartmentId()));
         DepartmentDetails dept = deptoptional.get();
-        if (!dept.getDepartmentName().equals(departmentRequestDto.getDepartmentName().toLowerCase())) {
+        if (!dept.getDepartmentName().equals(departmentRequestDto.getDepartmentName())) {
             Optional<DepartmentDetails> checkifDepartmentpresent = CheckIfDepartmentIsPresent(departmentRequestDto.getDepartmentName().toLowerCase());
-            if (checkifDepartmentpresent.isPresent()) {
-                return new ResponseEntity<>(MessageConfig.DEPARTMENT_ALREADY_EXIST + "service", HttpStatus.NOT_ACCEPTABLE);
-            } else {
-                dept.setDepartmentName(departmentRequestDto.getDepartmentName().toLowerCase());
+            if (!checkifDepartmentpresent.isPresent()) {
+                dept.setDepartmentName(departmentRequestDto.getDepartmentName());
             }
         }
-        dept.setIsActive(departmentRequestDto.getIsActive());
+        dept.setIsActive(true);
         dept.setUpdatedDate(LocalDateTime.now());
         dept.setUpdatedBy("Admin");
-        return new ResponseEntity<>(departmentRepository.save(dept), HttpStatus.OK);
+        return departmentRepository.save(dept);
     }
 
     public DepartmentDetails SaveTheDepartmentDetails(DepartmentDetails dept) {
@@ -93,5 +91,12 @@ public class DepartmentService {
             }
         }
         return false;
+    }
+
+    public DepartmentDetails ChangeTheStatusOFDepartmentTOActive(DepartmentDetails departmentDetails) {
+        departmentDetails.setUpdatedDate(LocalDateTime.now());
+        departmentDetails.setUpdatedBy("Admin");
+        departmentDetails.setIsActive(true);
+        return departmentRepository.save(departmentDetails);
     }
 }

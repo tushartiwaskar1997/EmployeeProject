@@ -34,45 +34,48 @@ public class DesignationService {
     }
 
     public String DeleteTheDesignationById(Long id) {
-
         Optional<DesignationDetails> designationOptional = GetTheDesignationDetailsById(id);
         DesignationDetails designationDetails = designationOptional.get();
         designationDetails.setIsActive(false);
         designationDetails.setUpdatedBy("Admin");
         designationDetails.setUpdatedDate(LocalDateTime.now());
         designationRepository.save(designationDetails);
-        return MessageConfig.DESIGNATION_DELETED_SUCCESSFULLY;
+        return MessageConfig.SUCCESS_DESIGNATION_DELETED;
 
     }
 
-    public ResponseEntity<Object> AddTheDesignation(DesignationRequestDto designationDto) {
-
+    public DesignationDetails AddTheDesignation(DesignationRequestDto designationDto) {
         DesignationDetails designationDetails = new DesignationDetails();
         designationDetails.setDesignationName(designationDto.getDesignationName());
         designationDetails.setIsActive(true);
         designationDetails.setCreatedDate(LocalDateTime.now());
         designationDetails.setCreatedBy("User");
         designationDetails.setTotalEmployee(0L);
-        return new ResponseEntity<>(designationRepository.save(designationDetails), HttpStatus.CREATED);
+        return designationRepository.save(designationDetails);
     }
 
-    public ResponseEntity<Object> UpdateTheDesignation(DesignationRequestDto designationDto) {
+    public DesignationDetails UpdateTheDesignation(DesignationRequestDto designationDto) {
         Optional<DesignationDetails> desigOptional = GetTheDesignationDetailsById((designationDto.getDesignationId()));
         DesignationDetails designationDetails = desigOptional.get();
         designationDetails.setDesignationName(designationDto.getDesignationName());
         designationDetails.setUpdatedBy("Admin");
         designationDetails.setUpdatedDate(LocalDateTime.now());
-        designationDetails.setIsActive(designationDto.getIsActive());
-        return new ResponseEntity<>(designationRepository.save(designationDetails), HttpStatus.OK);
+        designationDetails.setIsActive(true);
+        return designationRepository.save(designationDetails);
     }
 
     public void SaveTheDesignation(DesignationDetails designationDetails) {
         designationRepository.save(designationDetails);
     }
 
-
     public Optional<DesignationDetails> CheckIfDesignationNameExistOrNot(String name) {
         return designationRepository.findByDesignationName(name);
     }
 
+    public DesignationDetails UpdateTheDesignationStatusById(DesignationDetails designationDetails) {
+        designationDetails.setUpdatedDate(LocalDateTime.now());
+        designationDetails.setUpdatedBy("Admin");
+        designationDetails.setIsActive(true);
+        return designationRepository.save(designationDetails);
+    }
 }
